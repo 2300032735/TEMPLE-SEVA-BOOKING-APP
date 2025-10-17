@@ -3,20 +3,20 @@ import axios from 'axios';
 import './style.css';
 import config from './config.js';
 
-// ====== NEW: Map Seva Type to Amount ======
+// Map Seva Type to Amount
 const SEVA_AMOUNTS = {
+  "Thomala Seva": 5000,
+  "Arjitha Sevas": 5000,
   "Archana": 1000,
   "Abhishekam": 1500,
   "Harathi": 500,
   "Special Seva": 3000,
-  "Thomala Seva": 5000,
   "Kalyanotsavam": 20000,
   "Sahasra Deepalankara Seva": 15000,
-  "Vasanthotsavam": 10000,
-  "Arjitha Sevas": 5000
+  "Vasanthotsavam": 10000
 };
 
-// ====== NEW: List of Available Temples ======
+// Temple list
 const TEMPLES = [
   "Tirumala Venkateswara Temple",
   "Annavaram Temple",
@@ -25,7 +25,7 @@ const TEMPLES = [
   "Simhachalam Temple"
 ];
 
-// ====== NEW: List of Time Slots ======
+// Time slots
 const TIME_SLOTS = [
   "06:00 AM - 07:00 AM",
   "07:00 AM - 08:00 AM",
@@ -38,15 +38,14 @@ const TIME_SLOTS = [
 const SevaManager = () => {
   const [sevas, setSevas] = useState([]);
   const [seva, setSeva] = useState({
-    id: '',
     devoteeName: '',
-    templeName: '',
-    sevaType: '',
-    bookingDate: '',
-    timeSlot: '',
+    templeName: TEMPLES[0],
+    sevaType: 'Thomala Seva',
+    bookingDate: new Date().toISOString().slice(0, 10),
+    timeSlot: TIME_SLOTS[0],
     contactNumber: '',
     email: '',
-    amount: ''
+    amount: SEVA_AMOUNTS["Thomala Seva"]
   });
   const [idToFetch, setIdToFetch] = useState('');
   const [fetchedSeva, setFetchedSeva] = useState(null);
@@ -59,6 +58,7 @@ const SevaManager = () => {
     fetchAllSevas();
   }, []);
 
+  // Fetch all Sevas
   const fetchAllSevas = async () => {
     try {
       const res = await axios.get(`${baseUrl}/all`);
@@ -68,21 +68,18 @@ const SevaManager = () => {
     }
   };
 
-  // ====== MODIFIED: handleChange to auto-set amount ======
+  // Handle form changes
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "sevaType") {
-      setSeva({
-        ...seva,
-        sevaType: value,
-        amount: SEVA_AMOUNTS[value] || '' // auto-set amount
-      });
+    if (name === 'sevaType') {
+      setSeva({ ...seva, sevaType: value, amount: SEVA_AMOUNTS[value] || 0 });
     } else {
       setSeva({ ...seva, [name]: value });
     }
   };
 
+  // Validate form
   const validateForm = () => {
     for (let key in seva) {
       if (!seva[key] || seva[key].toString().trim() === '') {
@@ -93,18 +90,26 @@ const SevaManager = () => {
     return true;
   };
 
+  // Add Seva
   const addSeva = async () => {
     if (!validateForm()) return;
+
     try {
-      await axios.post(`${baseUrl}/add`, seva);
+      const payload = {
+        ...seva,
+        amount: Number(seva.amount)
+      };
+      await axios.post(`${baseUrl}/add`, payload);
       setMessage('✅ Seva added successfully.');
       fetchAllSevas();
       resetForm();
-    } catch {
-      setMessage('❌ Error adding Seva.');
+    } catch (error) {
+      console.error("Add Seva Error:", error.response || error.message);
+      setMessage('❌ Error adding Seva. Maybe duplicate contact/email.');
     }
   };
 
+  // Update Seva
   const updateSeva = async () => {
     if (!validateForm()) return;
     try {
@@ -117,6 +122,7 @@ const SevaManager = () => {
     }
   };
 
+  // Delete Seva
   const deleteSeva = async (id) => {
     try {
       await axios.delete(`${baseUrl}/delete/${id}`);
@@ -127,6 +133,7 @@ const SevaManager = () => {
     }
   };
 
+  // Fetch by ID
   const getSevaById = async () => {
     try {
       const res = await axios.get(`${baseUrl}/get/${idToFetch}`);
@@ -146,15 +153,14 @@ const SevaManager = () => {
 
   const resetForm = () => {
     setSeva({
-      id: '',
       devoteeName: '',
-      templeName: '',
-      sevaType: '',
-      bookingDate: '',
-      timeSlot: '',
+      templeName: TEMPLES[0],
+      sevaType: 'Thomala Seva',
+      bookingDate: new Date().toISOString().slice(0, 10),
+      timeSlot: TIME_SLOTS[0],
       contactNumber: '',
       email: '',
-      amount: ''
+      amount: SEVA_AMOUNTS["Thomala Seva"]
     });
     setEditMode(false);
   };
@@ -170,47 +176,31 @@ const SevaManager = () => {
 
       <h2>🪔 Seva Booking Management</h2>
 
-      {/* ===== Add / Edit Form ===== */}
+      {/* Add / Edit Form */}
       <div>
         <h3>{editMode ? 'Edit Seva' : 'Add Seva'}</h3>
         <div className="form-grid">
-          <input type="number" name="id" placeholder="ID" value={seva.id} onChange={handleChange} />
           <input type="text" name="devoteeName" placeholder="Devotee Name" value={seva.devoteeName} onChange={handleChange} />
 
-          {/* ===== Temple Name Dropdown (NEW) ===== */}
+          {/* Temple */}
           <select name="templeName" value={seva.templeName} onChange={handleChange}>
-            <option value="">Select Temple</option>
-            {TEMPLES.map((temple, index) => (
-              <option key={index} value={temple}>{temple}</option>
-            ))}
+            {TEMPLES.map((temple, idx) => <option key={idx} value={temple}>{temple}</option>)}
           </select>
 
-          {/* ===== Seva Type Dropdown (MODIFIED) ===== */}
+          {/* Seva Type */}
           <select name="sevaType" value={seva.sevaType} onChange={handleChange}>
-            <option value="">Select Seva Type</option>
-            <option value="Archana">Archana</option>
-            <option value="Abhishekam">Abhishekam</option>
-            <option value="Harathi">Harathi</option>
-            <option value="Special Seva">Special Seva</option>
-            <option value="Thomala Seva">Thomala Seva</option>
-            <option value="Kalyanotsavam">Kalyanotsavam</option>
-            <option value="Sahasra Deepalankara Seva">Sahasra Deepalankara Seva</option>
-            <option value="Vasanthotsavam">Vasanthotsavam</option>
-            <option value="Arjitha Sevas">Arjitha Sevas</option>
+            {Object.keys(SEVA_AMOUNTS).map((s, idx) => <option key={idx} value={s}>{s}</option>)}
           </select>
 
           <input type="date" name="bookingDate" value={seva.bookingDate} onChange={handleChange} />
 
-          {/* ===== Time Slot Dropdown (NEW) ===== */}
+          {/* Time Slot */}
           <select name="timeSlot" value={seva.timeSlot} onChange={handleChange}>
-            <option value="">Select Time Slot</option>
-            {TIME_SLOTS.map((slot, index) => (
-              <option key={index} value={slot}>{slot}</option>
-            ))}
+            {TIME_SLOTS.map((slot, idx) => <option key={idx} value={slot}>{slot}</option>)}
           </select>
 
-          {/* ===== Amount Read-Only (MODIFIED) ===== */}
-          <input type="number" name="amount" placeholder="Amount" value={seva.amount} readOnly />
+          {/* Amount (read-only) */}
+          <input type="number" name="amount" value={seva.amount} readOnly />
 
           <input type="text" name="contactNumber" placeholder="Contact Number" value={seva.contactNumber} onChange={handleChange} />
           <input type="email" name="email" placeholder="Email" value={seva.email} onChange={handleChange} />
@@ -228,59 +218,40 @@ const SevaManager = () => {
         </div>
       </div>
 
-      {/* ===== Fetch By ID ===== */}
+      {/* Fetch by ID */}
       <div>
         <h3>🔍 Get Seva By ID</h3>
-        <input
-          type="number"
-          value={idToFetch}
-          onChange={(e) => setIdToFetch(e.target.value)}
-          placeholder="Enter Seva ID"
-        />
+        <input type="number" value={idToFetch} onChange={(e) => setIdToFetch(e.target.value)} placeholder="Enter Seva ID" />
         <button className="btn-blue" onClick={getSevaById}>Fetch</button>
-
-        {fetchedSeva && (
-          <div>
-            <h4>Seva Found:</h4>
-            <pre>{JSON.stringify(fetchedSeva, null, 2)}</pre>
-          </div>
-        )}
+        {fetchedSeva && <pre>{JSON.stringify(fetchedSeva, null, 2)}</pre>}
       </div>
 
-      {/* ===== All Sevas Table ===== */}
+      {/* All Sevas */}
       <div>
         <h3>📜 All Sevas</h3>
-        {sevas.length === 0 ? (
-          <p>No Sevas found.</p>
-        ) : (
+        {sevas.length === 0 ? <p>No Sevas found.</p> :
           <div className="table-wrapper">
             <table>
               <thead>
                 <tr>
-                  {Object.keys(seva).map((key) => (
-                    <th key={key}>{key}</th>
-                  ))}
+                  {Object.keys(seva).map((key) => <th key={key}>{key}</th>)}
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {sevas.map((s) => (
                   <tr key={s.id}>
-                    {Object.keys(seva).map((key) => (
-                      <td key={key}>{s[key]}</td>
-                    ))}
+                    {Object.keys(seva).map((key) => <td key={key}>{s[key]}</td>)}
                     <td>
-                      <div className="action-buttons">
-                        <button className="btn-green" onClick={() => handleEdit(s)}>Edit</button>
-                        <button className="btn-red" onClick={() => deleteSeva(s.id)}>Delete</button>
-                      </div>
+                      <button className="btn-green" onClick={() => handleEdit(s)}>Edit</button>
+                      <button className="btn-red" onClick={() => deleteSeva(s.id)}>Delete</button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        )}
+        }
       </div>
 
     </div>

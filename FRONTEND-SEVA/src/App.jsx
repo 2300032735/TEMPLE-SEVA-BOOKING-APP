@@ -6,7 +6,7 @@ import "./index.css";
 function App() {
   return (
     <div>
-      {/* Navbar */}
+      {/* ====== Header ====== */}
       <header className="navbar">
         <div className="nav-logo">
           <img src="/puri.png" alt="Temple Logo" className="logo" />
@@ -14,21 +14,21 @@ function App() {
         </div>
       </header>
 
-      {/* Hero Banner */}
+      {/* ====== Hero Banner ====== */}
       <div className="hero-section">
-        <img src="/temple_bg.jpg" alt="Temple Banner" className="hero-image" />
+        <img src="/temple_1.jpg" alt="Temple Banner" className="hero-image" />
         <div className="hero-overlay">
           <h2>Book Your Seva Online</h2>
           <p>Experience divine blessings from the comfort of your home</p>
         </div>
       </div>
 
-      {/* Main Component */}
+      {/* ====== Seva Manager Component ====== */}
       <main>
         <SevaManager />
       </main>
 
-      {/* Footer */}
+      {/* ====== Footer ====== */}
       <footer className="footer">
         <p>© 2025 Seva Booking Portal | Powered by Divine Services</p>
       </footer>
