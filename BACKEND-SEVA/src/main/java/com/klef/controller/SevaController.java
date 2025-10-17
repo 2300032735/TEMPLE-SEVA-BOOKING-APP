@@ -11,30 +11,34 @@ import com.klef.entity.SevaBooking;
 import com.klef.service.SevaBookingService;
 
 @RestController
-@RequestMapping("/sevaapi/")
-@CrossOrigin(origins = "*")
+@RequestMapping("/sevaapi") 
+@CrossOrigin(origins = "*") // allow requests from any frontend
 public class SevaController {
 
     @Autowired
     private SevaBookingService sevaBookingService;
-    
+
+    // Root endpoint
     @GetMapping("/")
     public String home() {
-        return "Seva Booking Management Demo";
+        return "Seva Booking API is running!";
     }
 
+    // Add a new SevaBooking
     @PostMapping("/add")
     public ResponseEntity<SevaBooking> addSevaBooking(@RequestBody SevaBooking sevaBooking) {
         SevaBooking savedBooking = sevaBookingService.addSevaBooking(sevaBooking);
         return new ResponseEntity<>(savedBooking, HttpStatus.CREATED);
     }
 
+    // Get all SevaBookings
     @GetMapping("/all")
     public ResponseEntity<List<SevaBooking>> getAllSevaBookings() {
         List<SevaBooking> bookings = sevaBookingService.getAllSevaBookings();
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
+    // Get SevaBooking by ID
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getSevaBookingById(@PathVariable int id) {
         SevaBooking booking = sevaBookingService.getSevaBookingById(id);
@@ -45,6 +49,7 @@ public class SevaController {
         }
     }
 
+    // Update SevaBooking
     @PutMapping("/update")
     public ResponseEntity<?> updateSevaBooking(@RequestBody SevaBooking sevaBooking) {
         SevaBooking existing = sevaBookingService.getSevaBookingById(sevaBooking.getId());
@@ -56,6 +61,7 @@ public class SevaController {
         }
     }
 
+    // Delete SevaBooking
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteSevaBooking(@PathVariable int id) {
         SevaBooking existing = sevaBookingService.getSevaBookingById(id);

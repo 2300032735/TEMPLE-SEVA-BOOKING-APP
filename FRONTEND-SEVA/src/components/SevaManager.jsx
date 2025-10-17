@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './style.css';
-import config from './config.js';
+import '../style.css';
+import config from '../config.js';  // <- correct path
 
-// Map Seva Type to Amount
 const SEVA_AMOUNTS = {
   "Thomala Seva": 5000,
   "Arjitha Sevas": 5000,
@@ -16,7 +15,6 @@ const SEVA_AMOUNTS = {
   "Vasanthotsavam": 10000
 };
 
-// Temple list
 const TEMPLES = [
   "Tirumala Venkateswara Temple",
   "Annavaram Temple",
@@ -25,7 +23,6 @@ const TEMPLES = [
   "Simhachalam Temple"
 ];
 
-// Time slots
 const TIME_SLOTS = [
   "06:00 AM - 07:00 AM",
   "07:00 AM - 08:00 AM",
@@ -52,13 +49,12 @@ const SevaManager = () => {
   const [message, setMessage] = useState('');
   const [editMode, setEditMode] = useState(false);
 
-  const baseUrl = `${config.url}/sevaapi`;
+  const baseUrl = config.url;  // using config
 
   useEffect(() => {
     fetchAllSevas();
   }, []);
 
-  // Fetch all Sevas
   const fetchAllSevas = async () => {
     try {
       const res = await axios.get(`${baseUrl}/all`);
@@ -68,18 +64,15 @@ const SevaManager = () => {
     }
   };
 
-  // Handle form changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === 'sevaType') {
-      setSeva({ ...seva, sevaType: value, amount: SEVA_AMOUNTS[value] || 0 });
+      setSeva({ ...seva, sevaType: value, amount: SEVA_AMOUNTS[value] });
     } else {
       setSeva({ ...seva, [name]: value });
     }
   };
 
-  // Validate form
   const validateForm = () => {
     for (let key in seva) {
       if (!seva[key] || seva[key].toString().trim() === '') {
@@ -90,26 +83,18 @@ const SevaManager = () => {
     return true;
   };
 
-  // Add Seva
   const addSeva = async () => {
     if (!validateForm()) return;
-
     try {
-      const payload = {
-        ...seva,
-        amount: Number(seva.amount)
-      };
-      await axios.post(`${baseUrl}/add`, payload);
+      await axios.post(`${baseUrl}/add`, seva);
       setMessage('✅ Seva added successfully.');
       fetchAllSevas();
       resetForm();
-    } catch (error) {
-      console.error("Add Seva Error:", error.response || error.message);
-      setMessage('❌ Error adding Seva. Maybe duplicate contact/email.');
+    } catch {
+      setMessage('❌ Error adding Seva.');
     }
   };
 
-  // Update Seva
   const updateSeva = async () => {
     if (!validateForm()) return;
     try {
@@ -122,7 +107,6 @@ const SevaManager = () => {
     }
   };
 
-  // Delete Seva
   const deleteSeva = async (id) => {
     try {
       await axios.delete(`${baseUrl}/delete/${id}`);
@@ -133,7 +117,6 @@ const SevaManager = () => {
     }
   };
 
-  // Fetch by ID
   const getSevaById = async () => {
     try {
       const res = await axios.get(`${baseUrl}/get/${idToFetch}`);
@@ -167,7 +150,6 @@ const SevaManager = () => {
 
   return (
     <div className="seva-container">
-
       {message && (
         <div className={`message-banner ${message.toLowerCase().includes('error') ? 'error' : 'success'}`}>
           {message}
@@ -176,32 +158,22 @@ const SevaManager = () => {
 
       <h2>🪔 Seva Booking Management</h2>
 
-      {/* Add / Edit Form */}
+      {/* Add/Edit Form */}
       <div>
         <h3>{editMode ? 'Edit Seva' : 'Add Seva'}</h3>
         <div className="form-grid">
           <input type="text" name="devoteeName" placeholder="Devotee Name" value={seva.devoteeName} onChange={handleChange} />
-
-          {/* Temple */}
           <select name="templeName" value={seva.templeName} onChange={handleChange}>
-            {TEMPLES.map((temple, idx) => <option key={idx} value={temple}>{temple}</option>)}
+            {TEMPLES.map((t, i) => <option key={i} value={t}>{t}</option>)}
           </select>
-
-          {/* Seva Type */}
           <select name="sevaType" value={seva.sevaType} onChange={handleChange}>
-            {Object.keys(SEVA_AMOUNTS).map((s, idx) => <option key={idx} value={s}>{s}</option>)}
+            {Object.keys(SEVA_AMOUNTS).map((s, i) => <option key={i} value={s}>{s}</option>)}
           </select>
-
           <input type="date" name="bookingDate" value={seva.bookingDate} onChange={handleChange} />
-
-          {/* Time Slot */}
           <select name="timeSlot" value={seva.timeSlot} onChange={handleChange}>
-            {TIME_SLOTS.map((slot, idx) => <option key={idx} value={slot}>{slot}</option>)}
+            {TIME_SLOTS.map((slot, i) => <option key={i} value={slot}>{slot}</option>)}
           </select>
-
-          {/* Amount (read-only) */}
           <input type="number" name="amount" value={seva.amount} readOnly />
-
           <input type="text" name="contactNumber" placeholder="Contact Number" value={seva.contactNumber} onChange={handleChange} />
           <input type="email" name="email" placeholder="Email" value={seva.email} onChange={handleChange} />
         </div>
@@ -253,9 +225,9 @@ const SevaManager = () => {
           </div>
         }
       </div>
-
     </div>
   );
 };
 
 export default SevaManager;
+
