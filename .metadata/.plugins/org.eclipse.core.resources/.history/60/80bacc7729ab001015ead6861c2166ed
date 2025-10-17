@@ -1,0 +1,62 @@
+package com.klef.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "seva_booking_table")
+public class SevaBooking {
+
+    @Id
+    @Column(name = "booking_id")
+    private int id;
+
+    @Column(name = "temple_name", nullable = false, length = 50)
+    private String templeName;
+
+    @Column(name = "seva_name", nullable = false, length = 50)
+    private String sevaName;
+
+    @Column(name = "participant_name", nullable = false, length = 50)
+    private String participantName;
+
+    @Column(name = "contact_number", nullable = false, unique = true, length = 20)
+    private String contactNumber;
+
+    @Column(name = "booking_date", nullable = false, length = 20)
+    private String date;
+
+    @Column(name = "seva_fee", nullable = false)
+    private double fee;
+
+    // Getters and Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getTempleName() { return templeName; }
+    public void setTempleName(String templeName) { this.templeName = templeName; }
+
+    public String getSevaName() { return sevaName; }
+    public void setSevaName(String sevaName) { this.sevaName = sevaName; }
+
+    public String getParticipantName() { return participantName; }
+    public void setParticipantName(String participantName) { this.participantName = participantName; }
+
+    public String getContactNumber() { return contactNumber; }
+    public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
+
+    public double getFee() { return fee; }
+    public void setFee(double fee) { this.fee = fee; }
+
+    @Override
+    public String toString() {
+        return "SevaBooking [id=" + id + ", templeName=" + templeName + ", sevaName=" + sevaName
+                + ", participantName=" + participantName + ", contactNumber=" + contactNumber
+                + ", date=" + date + ", fee=" + fee + "]";
+    }
+}

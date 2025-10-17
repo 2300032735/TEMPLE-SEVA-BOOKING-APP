@@ -1,0 +1,68 @@
+package com.klef.dev.controller;
+
+import com.klef.dev.entity.SevaBooking;
+import com.klef.dev.service.SevaBookingService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/sevaapi/")
+@CrossOrigin(origins = "*")
+public class SevaController {
+
+    @Autowired
+    private SevaBookingService sevaBookingService;
+
+    @GetMapping("/")
+    public String home() {
+        return "Temple Seva Booking API";
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<SevaBooking> addBooking(@RequestBody SevaBooking booking) {
+        SevaBooking savedBooking = sevaBookingService.saveBooking(booking);
+        return new ResponseEntity<>(savedBooking, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<SevaBooking>> getAllBookings() {
+        List<SevaBooking> bookings = sevaBookingService.getAllBookings();
+        return new ResponseEntity<>(bookings, HttpStatus.OK);
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getBookingById(@PathVariable int id) {
+        SevaBooking booking = sevaBookingService.getBookingById(id);
+        if (booking != null) {
+            return new ResponseEntity<>(booking, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Booking with ID " + id + " not found.", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateBooking(@RequestBody SevaBooking booking) {
+        SevaBooking existing = sevaBookingService.getBookingById(booking.getId());
+        if (existing != null) {
+            SevaBooking updatedBooking = sevaBookingService.updateBooking(booking.getId(), booking);
+            return new ResponseEntity<>(updatedBooking, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Cannot update. Booking with ID " + booking.getId() + " not found.", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteBooking(@PathVariable int id) {
+        SevaBooking existing = sevaBookingService.getBookingById(id);
+        if (existing != null) {
+            sevaBookingService.deleteBooking(id);
+            return new ResponseEntity<>("Booking with ID " + id + " deleted successfully.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Cannot delete. Booking with ID " + id + " not found.", HttpStatus.NOT_FOUND);
+        }
+    }
+}

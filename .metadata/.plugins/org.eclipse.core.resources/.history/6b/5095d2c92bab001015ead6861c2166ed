@@ -1,0 +1,5 @@
+IMPL.JAVpackage com.klef.service;
+
+public class SevaBookingServiceImpl {
+
+}

@@ -1,0 +1,39 @@
+package com.klef.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "seva_booking_table")
+public class SevaBooking {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "booking_id")
+    private int id;
+
+    @Column(name = "devotee_name", nullable = false, length = 50)
+    private String devoteeName;
+
+    @Column(name = "temple_name", nullable = false, length = 100)
+    private String templeName;
+
+    @Column(name = "seva_type", nullable = false, length = 50)
+    private String sevaType;
+
+    @Column(name = "booking_date", nullable = false, length = 20)
+    private String bookingDate;
+
+    @Column(name = "time_slot", nullable = false, length = 20)
+    private String timeSlot;
+
+    @Column(name = "contact_number", nullable = false, unique = true, length = 20)
+    private String contactNumber;
+
+    @Column(name = "email", nullable = false, unique = true, length = 50)
+    private String email;
+
+    @Column(name = "amount", nullable = false)
+    private double amount;
+
+    // Getters and Setters ...
+}

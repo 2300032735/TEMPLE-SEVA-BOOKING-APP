@@ -1,0 +1,6 @@
+package com.klef.repository;
+
+public interface SevaBookingRepository {
+
+
+}
