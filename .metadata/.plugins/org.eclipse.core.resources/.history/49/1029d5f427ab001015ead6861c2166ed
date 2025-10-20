@@ -1,0 +1,5 @@
+package SevaBookingService;
+
+public interface SevaBookingService {
+
+}

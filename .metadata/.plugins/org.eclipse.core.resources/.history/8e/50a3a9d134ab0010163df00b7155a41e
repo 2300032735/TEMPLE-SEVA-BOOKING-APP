@@ -1,0 +1,12 @@
+package com.klef.service;
+
+import java.util.List;
+import com.klef.entity.SevaBooking;
+
+public interface SevaBookingService {
+    SevaBooking addSevaBooking(SevaBooking booking);
+    List<SevaBooking> getAllSevaBookings();
+    SevaBooking getSevaBookingById(int id);
+    SevaBooking updateSevaBooking(SevaBooking booking);
+    void deleteSevaBookingById(int id);
+}

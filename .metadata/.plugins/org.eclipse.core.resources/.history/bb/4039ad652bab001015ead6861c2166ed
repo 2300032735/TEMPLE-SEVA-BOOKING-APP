@@ -1,0 +1,17 @@
+package com.klef.repository;
+
+public interface SevaBookingRepository {
+
+
+	
+
+	@Repository
+	public interface SevaBookingRepository extends JpaRepository<SevaBooking, Integer>
+	{
+	    SevaBooking findByEmail(String email);
+	    SevaBooking findByContactNumber(String contactNumber);
+	}
+
+
+
+}

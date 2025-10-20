@@ -1,0 +1,48 @@
+package com.klef.backendseva.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import com.klef.backendseva.model.SevaBooking;
+import com.klef.backendseva.service.SevaBookingService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/sevaapi")
+@CrossOrigin(origins = "http://localhost:5173") // React frontend URL
+public class SevaController {
+
+    @Autowired
+    private SevaBookingService sevaBookingService;
+
+    // Home / test endpoint
+    @GetMapping("/")
+    public String home() {
+        return "Seva API is running!";
+    }
+
+    // Get all sevas
+    @GetMapping("/all")
+    public List<SevaBooking> getAllSevas() {
+        return sevaBookingService.getAllSevas();
+    }
+
+    // Add new seva
+    @PostMapping("/add")
+    public SevaBooking addSeva(@RequestBody SevaBooking sevaBooking) {
+        return sevaBookingService.addSeva(sevaBooking);
+    }
+
+    // Get seva by ID
+    @GetMapping("/get/{id}")
+    public SevaBooking getSeva(@PathVariable int id) {
+        return sevaBookingService.getSevaById(id);
+    }
+
+    // Delete seva
+    @DeleteMapping("/delete/{id}")
+    public String deleteSeva(@PathVariable int id) {
+        sevaBookingService.deleteSeva(id);
+        return "Deleted successfully";
+    }
+}

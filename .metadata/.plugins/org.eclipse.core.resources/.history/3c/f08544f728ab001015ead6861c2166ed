@@ -1,0 +1,41 @@
+package com.klef.dev.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "seva_booking_table")
+public class SevaBooking {
+
+    @Id
+    @Column(name = "booking_id")
+    private int id;
+
+    @Column(name = "temple_name", nullable = false, length = 50)
+    private String templeName;
+
+    @Column(name = "seva_name", nullable = false, length = 50)
+    private String sevaName;
+
+    @Column(name = "participant_name", nullable = false, length = 50)
+    private String participantName;
+
+    @Column(name = "contact_number", nullable = false, unique = true, length = 20)
+    private String contactNumber;
+
+    @Column(name = "booking_date", nullable = false, length = 20)
+    private String date;
+
+    @Column(name = "seva_fee", nullable = false)
+    private double fee;
+
+    // Getters and Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getTempleName() { return templeName; }
+    public void setTempleName(String templeName) { this.templeName = templeName; }
+
+    public String
