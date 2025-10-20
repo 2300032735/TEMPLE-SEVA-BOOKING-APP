@@ -64,7 +64,7 @@
 	</dependencies>
 
 	<build>
-	<finalName>springbootsevaapi</finalName>
+	<finalName>temple-seva</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
