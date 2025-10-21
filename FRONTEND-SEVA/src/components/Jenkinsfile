@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    stages {
+
+        // ===== FRONTEND BUILD =====
+        stage('Build Frontend') {
+            steps {
+                dir('FRONTEND-SEVA') {
+                    bat 'npm install'
+                    bat 'npm run build'
+                }
+            }
+        }
+
+        // ===== FRONTEND DEPLOY =====
+        stage('Deploy Frontend to Tomcat') {
+            steps {
+                bat '''
+                if exist "D:\\Tomcat\\webapps\\reactsevaapi" (
+                    rmdir /S /Q "D:\\Tomcat\\webapps\\reactsevaapi"
+                )
+                mkdir "D:\\Tomcat\\webapps\\reactsevaapi"
+                xcopy /E /I /Y FRONTEND-SEVA\\dist\\* "D:\\Tomcat\\webapps\\reactsevaapi"
+                '''
+            }
+        }
+
+        // ===== BACKEND BUILD =====
+        stage('Build Backend') {
+            steps {
+                dir('BACKEND-SEVA') {
+                    bat 'mvn clean package'
+                }
+            }
+        }
+
+        // ===== BACKEND DEPLOY =====
+        stage('Deploy Backend to Tomcat') {
+            steps {
+                bat '''
+                if exist "D:\\Tomcat\\webapps\\godtemple.war" (
+                    del /Q "D:\\Tomcat\\webapps\\godtemple.war"
+                )
+                if exist "D:\\Tomcat\\webapps\\godtemple" (
+                    rmdir /S /Q "D:\\Tomcat\\webapps\\godtemple"
+                )
+                copy "BACKEND-SEVA\\target\\godtemple.war" "D:\\Tomcat\\webapps\\"
+                '''
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo 'Deployment Successful!'
+        }
+        failure {
+            echo 'Pipeline Failed.'
+        }
+    }
+}
